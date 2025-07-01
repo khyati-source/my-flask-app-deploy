@@ -1,30 +1,30 @@
-cat > Jenkinsfile <<EOF
 pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'yourdockerhubusername/flask-app:latest'
+        IMAGE = "khyati8/flask-app:latest"
+        CREDS_ID = "dockerhub-creds-id"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clone Code') {
             steps {
-                git 'https://github.com/yourusername/my-flask-app.git'
+                git 'https://github.com/khyati-source/my-app-flask.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t \$IMAGE_NAME .'
+                sh "docker build -t $IMAGE ."
             }
         }
 
-        stage('Push to DockerHub') {
+        stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: CREDS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh '''
-                        echo "\$PASSWORD" | docker login -u "\$USERNAME" --password-stdin
-                        docker push \$IMAGE_NAME
+                        echo "$PASS" | docker login -u "$USER" --password-stdin
+                        docker push $IMAGE
                     '''
                 }
             }
@@ -32,10 +32,9 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f deployment.yaml'
+                sh "kubectl apply -f deployment.yaml"
             }
         }
     }
 }
-EOF
 
