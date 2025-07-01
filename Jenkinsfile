@@ -8,10 +8,11 @@ pipeline {
 
     stages {
         stage('Clone Code') {
-            steps {
-                git 'https://github.com/khyati-source/my-app-flask.git'
-            }
-        }
+    steps {
+        git credentialsId: 'my-github-username-token', url: 'https://github.com/khyati-source/my-flask-app-deploy.git', branch: 'main'
+          }
+    }
+
 
         stage('Build Docker Image') {
             steps {
@@ -37,4 +38,3 @@ pipeline {
         }
     }
 }
-
