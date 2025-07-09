@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE = "khyati8/flask-app:latest"
-        CREDS_ID = "dockerhub-credentials"
+        CREDS_ID = "dockerhub-creds-id"
     }
 
     stages {
