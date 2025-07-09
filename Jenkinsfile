@@ -3,19 +3,25 @@ pipeline {
 
     environment {
         IMAGE = "khyati8/flask-app:latest"
-        CREDS_ID = "dockerhub-creds-id"
+        CREDS_ID = "dockerhub-credentials"
     }
 
     stages {
-        stage('Debug User') {
-            steps {
-                sh 'whoami && id && groups'
-            }
-        }
-
         stage('Clone Code') {
             steps {
                 git credentialsId: 'my-github-username-token', url: 'https://github.com/khyati-source/my-flask-app-deploy.git', branch: 'main'
+            }
+        }
+
+        stage('Verify Docker Access') {
+            steps {
+                sh '''
+                    echo "🔍 Checking Docker access..."
+                    echo "Running as: $(whoami)"
+                    echo "Groups: $(groups)"
+                    docker version
+                    docker ps
+                '''
             }
         }
 
@@ -45,4 +51,3 @@ pipeline {
         }
     }
 }
-
