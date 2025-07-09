@@ -7,12 +7,17 @@ pipeline {
     }
 
     stages {
-        stage('Clone Code') {
-    steps {
-        git credentialsId: 'my-github-username-token', url: 'https://github.com/khyati-source/my-flask-app-deploy.git', branch: 'main'
-          }
-    }
+        stage('Debug User') {
+            steps {
+                sh 'whoami && id && groups'
+            }
+        }
 
+        stage('Clone Code') {
+            steps {
+                git credentialsId: 'my-github-username-token', url: 'https://github.com/khyati-source/my-flask-app-deploy.git', branch: 'main'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -33,8 +38,11 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh "kubectl apply -f deployment.yaml"
+                withEnv(["KUBECONFIG=/var/lib/jenkins/.kube/config"]) {
+                    sh 'kubectl apply -f deployment.yaml'
+                }
             }
         }
     }
 }
+
