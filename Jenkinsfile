@@ -1,6 +1,6 @@
 
 pipeline {
-    agent any
+    agent { label 'worker1' }
 
     environment {
         IMAGE = "khyati8/flask-app:latest"
